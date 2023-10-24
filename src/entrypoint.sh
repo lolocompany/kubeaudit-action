@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -xe
 set -o pipefail
 
 PATH=${1}
@@ -12,6 +12,7 @@ KUBEAUDIT_INCLUDEGENEREATED=${6}
 KUBEAUDIT_VER=${7}
 HELMV2_VER=${8}
 HELMV3_VER=${9}
+KUBEAUDIT_CONFIG=${10}
 IFS=","
 
 if [[ "${HELMV2_VER}" != "" ]]; then
@@ -25,7 +26,7 @@ if [[ "${HELMV3_VER}" != "" ]]; then
 fi
 
 if [[ "${KUBEAUDIT_VER}" != "" ]]; then
-  curl -sSL https://github.com/Shopify/kubeaudit/releases/download/${KUBEAUDIT_VER}/kubeaudit_${KUBEAUDIT_VER}_linux_amd64.tar.gz | \
+  curl -sSL https://github.com/Shopify/kubeaudit/releases/download/v${KUBEAUDIT_VER}/kubeaudit_${KUBEAUDIT_VER}_linux_amd64.tar.gz | \
   tar xz && mv kubeaudit /usr/local/bin/kubeaudit
 fi
 
@@ -57,9 +58,19 @@ if [[ "${KUBEAUDIT_INCLUDEGENEREATED}" == "true" ]]; then
   KUBEAUDIT_INCLUDEGENEREATED="--includegenerated"
 fi
 
+if [[ "${KUBEAUDIT_CONFIG}" != "" ]]; then
+  echo ">>> File Checking"
+  /bin/ls -l
+  KUBEAUDIT_CONFIG="-k ${KUBEAUDIT_CONFIG}"
+fi
+
 ${HELM_CMD} template ${PATH} > manifest.yaml
 
 for command in ${KUBEAUDIT_COMMANDS}; do
+  echo ">>> kubeaudit version check"
+  /usr/local/bin/kubeaudit version
   echo ">>> Executing kubeaudit command ${command}"
-  /usr/local/bin/kubeaudit ${command} ${KUBEAUDIT_INCLUDEGENEREATED} ${KUBEAUDIT_FORMAT} ${KUBEAUDIT_MINSEVERITY} -f manifest.yaml
+  cmd="/usr/local/bin/kubeaudit ${command} ${KUBEAUDIT_INCLUDEGENEREATED} ${KUBEAUDIT_FORMAT} ${KUBEAUDIT_MINSEVERITY} ${KUBEAUDIT_CONFIG} -f manifest.yaml"
+  echo $cmd
+  eval $cmd
 done

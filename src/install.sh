@@ -15,8 +15,8 @@ curl -sSL https://get.helm.sh/helm-v${HELMV3_VER}-linux-amd64.tar.gz | \
 tar xz && mv linux-amd64/helm /usr/local/bin/helmv3 && rm -rf linux-amd64
 helmv3 version
 
-KUBEAUDIT_VER=0.16.0
+KUBEAUDIT_VER=0.22.0
 echo "downloading kubeaudit ${KUBEAUDIT_VER}"
-curl -sSL https://github.com/Shopify/kubeaudit/releases/download/${KUBEAUDIT_VER}/kubeaudit_${KUBEAUDIT_VER}_linux_amd64.tar.gz | \
+curl -sSL https://github.com/Shopify/kubeaudit/releases/download/v${KUBEAUDIT_VER}/kubeaudit_${KUBEAUDIT_VER}_linux_amd64.tar.gz | \
 tar xz && mv kubeaudit /usr/local/bin/kubeaudit
 kubeaudit --help

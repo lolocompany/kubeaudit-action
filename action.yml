@@ -37,6 +37,9 @@ inputs:
   helmV3Version:
     description: 'install Helm V3 version'
     required: false
+  kubeauditConfig:
+    description: 'kubeaudit config'
+    required: false
 runs:
   using: 'docker'
   image: 'Dockerfile'
@@ -50,3 +53,4 @@ runs:
     - ${{ inputs.kubeauditVersion }}            #7
     - ${{ inputs.helmV2Version }}               #8
     - ${{ inputs.helmV3Version }}               #9
+    - ${{ inputs.kubeauditConfig }}             #10
