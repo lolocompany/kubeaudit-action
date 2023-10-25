@@ -4,6 +4,7 @@ set -xe
 set -o pipefail
 
 PATH=${1}
+PATH_TO_VALUES=${11}
 KUBEAUDIT_COMMANDS=${2:-all}
 HELM=${3:-3}
 KUBEAUDIT_FORMAT=${4}
@@ -64,7 +65,13 @@ if [[ "${KUBEAUDIT_CONFIG}" != "" ]]; then
   KUBEAUDIT_CONFIG="-k ${KUBEAUDIT_CONFIG}"
 fi
 
-${HELM_CMD} template ${PATH} > manifest.yaml
+if [[ "${PATH_TO_VALUES}" != "" ]]; then
+  PATH_TO_VALUES="-f ${PATH_TO_VALUES}"
+fi
+
+helm_cmd="${HELM_CMD} template ${PATH} ${PATH_TO_VALUES} > manifest.yaml"
+echo $helm_cmd
+eval $helm_cmd
 
 for command in ${KUBEAUDIT_COMMANDS}; do
   echo ">>> kubeaudit version check"

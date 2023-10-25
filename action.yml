@@ -40,6 +40,9 @@ inputs:
   kubeauditConfig:
     description: 'kubeaudit config'
     required: false
+  pathToValues:
+    description: 'path to values file for helm'
+    required: false
 runs:
   using: 'docker'
   image: 'Dockerfile'
@@ -54,3 +57,4 @@ runs:
     - ${{ inputs.helmV2Version }}               #8
     - ${{ inputs.helmV3Version }}               #9
     - ${{ inputs.kubeauditConfig }}             #10
+    - ${{ inputs.pathToValues }}                #11
